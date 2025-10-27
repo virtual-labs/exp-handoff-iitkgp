@@ -4,6 +4,8 @@
 
 2) Gordon L. Stuber, 'Principles of Mobile Communications', 2nd Edition, Gordon L. Stuber, Georgia Institute of Technology, Atlanta, Georgia, USA, Kluwer Academic Publishers.
 
+3) Report ITU-R, M.2135 - 'Guidelines for evaluation of radio interface technologies for IMTadvanced'.
 #### Video Lectures
-- [NPTEL](http://nptel.ac.in/courses/117102062/10)
+- [NPTEL](http://nptel.ac.in/courses/117102062/4)
+- [NPTEL](http://www.nptel.ac.in/courses/106105080/pdf/M5L9.pdf)
 
