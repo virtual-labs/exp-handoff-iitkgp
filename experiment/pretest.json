@@ -1,39 +1,116 @@
-{
-  "version": 2.0,
+  {
+	  "version": 2.0,
   "questions": [
-    {
-      "question": "This is a Sample Question 1?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
+     {
+    "question": "1. What is the main aim of this experiment?",
+    "answers": {
+      "a": "To measure the maximum speed of a mobile user.",
+      "b": "To understand the process of transferring an active call between cells.",
+      "c": "To calculate the total call drop probability for the entire network.",
+      "d": "To study the SINR for a user who is not moving."
     },
-    {
-      "question": "This is a Sample Question 2?",
-      "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
-    }
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. What is a 'handover' in a mobile network?",
+    "answers": {
+      "a": "The process of starting a new call.",
+      "b": "The process of ending a call.",
+      "c": "The process of switching a call from a voice channel to a data channel.",
+      "d": "The process of transferring an ongoing call from one base station to another."
+    },
+    "correctAnswer": "d",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "3. According to the objectives, what two parameters are being studied for their effect on handover?",
+    "answers": {
+      "a": "Call duration and user speed.",
+      "b": "Handover threshold and handover margin.",
+      "c": "SINR and call drop probability.",
+      "d": "Base station height and transmit power."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "4. What is the 'handover threshold'?",
+    "answers": {
+      "a": "A signal quality level that, when dropped below, might trigger a handover.",
+      "b": "The maximum number of handovers allowed in one call.",
+      "c": "The physical boundary between two cells.",
+      "d": "The minimum data speed required to maintain a call."
+    },
+    "correctAnswer": "a",
+    "difficulty": "medium"
+  },
+  {
+    "question": "5. What is the 'handover margin' designed to prevent?",
+    "answers": {
+      "a": "Users from making calls.",
+      "b": "The call from dropping due to a very strong signal.",
+      "c": "Unnecessary handovers back and forth between two cells (ping-pong effect).",
+      "d": "The SINR from ever getting too high."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "6. Setting a very **low** handover margin would likely lead to:",
+    "answers": {
+      "a": "Fewer handovers and a higher call drop probability.",
+      "b": "Fewer handovers and a lower call drop probability.",
+      "c": "More handovers and a higher call drop probability.",
+      "d": "More handovers (ping-pong) but a lower call drop probability."
+    },
+    "correctAnswer": "d",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. Setting a very **high** handover margin would likely lead to:",
+    "answers": {
+      "a": "Fewer handovers, but an increased call drop probability.",
+      "b": "Fewer handovers and a decreased call drop probability.",
+      "c": "More handovers, but a decreased call drop probability.",
+      "d": "More handovers and an increased call drop probability."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "8. What is 'call drop probability'?",
+    "answers": {
+      "a": "The chance that a user will hang up the phone.",
+      "b": "The chance that a new call cannot be started.",
+      "c": "The chance that an ongoing call is involuntarily terminated.",
+      "d": "The chance that a handover will happen."
+    },
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "9. How does SINR (Signal-to-Interference-plus-Noise Ratio) relate to this experiment?",
+    "answers": {
+      "a": "The experiment studies how handover settings affect the SINR.",
+      "b": "The experiment aims to keep the SINR at zero.",
+      "c": "SINR is a measure of call cost, not quality.",
+      "d": "A high SINR is the main reason for call drops."
+    },
+    "correctAnswer": "a",
+    "difficulty": "medium"
+  },
+  {
+    "question": "10. What is 'handover probability'?",
+    "answers": {
+      "a": "The likelihood that a call will be dropped.",
+      "b": "The likelihood that a call will be successfully started.",
+      "c": "The likelihood that a handover event will occur.",
+      "d": "The likelihood that the SINR is good."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  }
+
   ]
 }
