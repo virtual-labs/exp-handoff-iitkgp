@@ -1,114 +1,114 @@
   {
 	  "version": 2.0,
   "questions": [
-    {
-    "question": "1. What does 'pathloss' fundamentally describe in a wireless communication system?",
+     {
+    "question": "1. What is the main aim of this experiment?",
     "answers": {
-      "a": "The signal amplification at the transmitter.",
-      "b": "The reduction in signal power density as it propagates through space.",
-      "c": "The speed of the data being transmitted.",
-      "d": "The total power consumed by the receiver."
+      "a": "To measure the maximum speed of a mobile user.",
+      "b": "To understand the process of transferring an active call between cells.",
+      "c": "To calculate the total call drop probability for the entire network.",
+      "d": "To study the SINR for a user who is not moving."
     },
     "correctAnswer": "b",
     "difficulty": "beginner"
   },
   {
-    "question": "2. If the transmitter power is doubled, what is the expected change in the received signal strength, assuming all other factors are constant?",
+    "question": "2. What is a 'handover' in a mobile network?",
     "answers": {
-      "a": "It will be halved.",
-      "b": "It will be squared.",
-      "c": "It will also double (or increase by 3 dB).",
-      "d": "It will not change."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "3. As the distance between the transmitter and receiver increases, what generally happens to the pathloss?",
-    "answers": {
-      "a": "It decreases.",
-      "b": "It increases.",
-      "c": "It stays the same.",
-      "d": "It becomes zero."
-    },
-    "correctAnswer": "b",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "4. A larger 'pathloss exponent' value typically implies which kind of environment?",
-    "answers": {
-      "a": "An open field with a clear line of sight.",
-      "b": "A dense urban area with many buildings and obstacles.",
-      "c": "A perfect vacuum (free space).",
-      "d": "An environment with no signal loss."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "5. In typical propagation models, how does increasing the carrier frequency affect the pathloss for a fixed distance?",
-    "answers": {
-      "a": "It decreases the pathloss.",
-      "b": "It has no effect on the pathloss.",
-      "c": "It increases the pathloss.",
-      "d": "It only affects the signal's speed, not its loss."
-    },
-    "correctAnswer": "c",
-    "difficulty": "medium"
-  },
-  {
-    "question": "6. What is the general effect of increasing the transmitter antenna height on the received signal strength?",
-    "answers": {
-      "a": "It decreases the received signal strength.",
-      "b": "It has no predictable effect.",
-      "c": "It increases the received signal strength, often by clearing obstructions.",
-      "d": "It only changes the signal's frequency."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "7. How does raising the receiver antenna height typically impact the received signal strength?",
-    "answers": {
-      "a": "It generally improves the received signal strength.",
-      "b": "It generally degrades the received signal strength.",
-      "c": "It has no impact on the received signal strength.",
-      "d": "It inverts the phase of the signal."
-    },
-    "correctAnswer": "a",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "8. What is the primary purpose of using a pathloss prediction formula?",
-    "answers": {
-      "a": "To calculate the exact manufacturing cost of a transmitter.",
-      "b": "To estimate the received signal strength at various locations.",
-      "c": "To determine the color of the antenna.",
-      "d": "To measure the speed of light."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "9. A pathloss exponent of two is characteristic of what ideal environment?",
-    "answers": {
-      "a": "A dense forest.",
-      "b": "A submarine communication channel.",
-      "c": "An indoor office with many walls.",
-      "d": "Free space, with no obstructions."
+      "a": "The process of starting a new call.",
+      "b": "The process of ending a call.",
+      "c": "The process of switching a call from a voice channel to a data channel.",
+      "d": "The process of transferring an ongoing call from one base station to another."
     },
     "correctAnswer": "d",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "3. According to the objectives, what two parameters are being studied for their effect on handover?",
+    "answers": {
+      "a": "Call duration and user speed.",
+      "b": "Handover threshold and handover margin.",
+      "c": "SINR and call drop probability.",
+      "d": "Base station height and transmit power."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "4. What is the 'handover threshold'?",
+    "answers": {
+      "a": "A signal quality level that, when dropped below, might trigger a handover.",
+      "b": "The maximum number of handovers allowed in one call.",
+      "c": "The physical boundary between two cells.",
+      "d": "The minimum data speed required to maintain a call."
+    },
+    "correctAnswer": "a",
     "difficulty": "medium"
   },
   {
-    "question": "10. To find the final received signal strength (in logarithmic units like dBm), the calculated pathloss is typically...",
+    "question": "5. What is the 'handover margin' designed to prevent?",
     "answers": {
-      "a": "Subtracted from the transmitter power (also in logarithmic units).",
-      "b": "Added to the transmitter power.",
-      "c": "Multiplied by the transmitter power.",
-      "d": "Ignored, as it's not part of the calculation."
+      "a": "Users from making calls.",
+      "b": "The call from dropping due to a very strong signal.",
+      "c": "Unnecessary handovers back and forth between two cells (ping-pong effect).",
+      "d": "The SINR from ever getting too high."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "6. Setting a very **low** handover margin would likely lead to:",
+    "answers": {
+      "a": "Fewer handovers and a higher call drop probability.",
+      "b": "Fewer handovers and a lower call drop probability.",
+      "c": "More handovers and a higher call drop probability.",
+      "d": "More handovers (ping-pong) but a lower call drop probability."
+    },
+    "correctAnswer": "d",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "7. Setting a very **high** handover margin would likely lead to:",
+    "answers": {
+      "a": "Fewer handovers, but an increased call drop probability.",
+      "b": "Fewer handovers and a decreased call drop probability.",
+      "c": "More handovers, but a decreased call drop probability.",
+      "d": "More handovers and an increased call drop probability."
     },
     "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "8. What is 'call drop probability'?",
+    "answers": {
+      "a": "The chance that a user will hang up the phone.",
+      "b": "The chance that a new call cannot be started.",
+      "c": "The chance that an ongoing call is involuntarily terminated.",
+      "d": "The chance that a handover will happen."
+    },
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "9. How does SINR (Signal-to-Interference-plus-Noise Ratio) relate to this experiment?",
+    "answers": {
+      "a": "The experiment studies how handover settings affect the SINR.",
+      "b": "The experiment aims to keep the SINR at zero.",
+      "c": "SINR is a measure of call cost, not quality.",
+      "d": "A high SINR is the main reason for call drops."
+    },
+    "correctAnswer": "a",
+    "difficulty": "medium"
+  },
+  {
+    "question": "10. What is 'handover probability'?",
+    "answers": {
+      "a": "The likelihood that a call will be dropped.",
+      "b": "The likelihood that a call will be successfully started.",
+      "c": "The likelihood that a handover event will occur.",
+      "d": "The likelihood that the SINR is good."
+    },
+    "correctAnswer": "c",
     "difficulty": "medium"
   }
 
