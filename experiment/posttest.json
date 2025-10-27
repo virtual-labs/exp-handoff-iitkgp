@@ -3,114 +3,114 @@
 	  "version": 2.0,
   "questions": [
     {
-    "question": "1. If the distance from the transmitter is doubled, and the pathloss exponent is two (like in free space), by how much does the received signal power decrease?",
+    "question": "1. What is the primary reason a handover mechanism is necessary in a cellular network?",
     "answers": {
-      "a": "It decreases by half.",
-      "b": "It decreases by a factor of four.",
-      "c": "It doubles.",
-      "d": "It does not change."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "2. When comparing two signals, one at a very high carrier frequency and one at a very low carrier frequency, which one will experience more pathloss over the same distance in free space?",
-    "answers": {
-      "a": "The low-frequency signal.",
-      "b": "The high-frequency signal.",
-      "c": "Both will experience the same pathloss.",
-      "d": "It depends on the transmitter power."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "3. What is the main purpose of raising the transmitter antenna height on a cellular tower?",
-    "answers": {
-      "a": "To decrease the carrier frequency.",
-      "b": "To reduce interference from other towers.",
-      "c": "To increase the signal's range by clearing obstacles.",
-      "d": "To reduce the transmitter power required."
+      "a": "To allow users to change their phone numbers.",
+      "b": "To ensure call quality remains stable for stationary users.",
+      "c": "To maintain a call connection for a mobile user moving between cells.",
+      "d": "To bill the user based on their location."
     },
     "correctAnswer": "c",
     "difficulty": "beginner"
   },
   {
-    "question": "4. If you are in a building and your cell phone's received signal strength is weak, what is the most likely reason related to pathloss?",
+    "question": "2. What is the 'ping-pong effect' in the context of handovers?",
     "answers": {
-      "a": "The transmitter power of the base station is too low.",
-      "b": "The carrier frequency is too low.",
-      "c": "The pathloss exponent is very high due to walls and obstructions.",
-      "d": "The transmitter antenna is too high."
-    },
-    "correctAnswer": "c",
-    "difficulty": "medium"
-  },
-  {
-    "question": "5. Which of these factors does *not* directly influence the pathloss calculation, but rather the *final* received signal strength?",
-    "answers": {
-      "a": "Carrier frequency.",
-      "b": "Transmitter antenna height.",
-      "c": "Distance of separation.",
-      "d": "Transmitter power."
-    },
-    "correctAnswer": "d",
-    "difficulty": "medium"
-  },
-  {
-    "question": "6. A pathloss exponent of 4 is measured in a certain environment. What does this high value suggest?",
-    "answers": {
-      "a": "A clear, unobstructed line-of-sight path.",
-      "b": "A signal that is being guided, like in a tunnel.",
-      "c": "A very lossy environment with many reflections and obstructions.",
-      "d": "An environment where signal strength increases with distance."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "7. How does increasing the receiver antenna height, for example, by moving your phone from your pocket to your ear, typically affect the received signal?",
-    "answers": {
-      "a": "It has no effect.",
-      "b": "It significantly increases the pathloss.",
-      "c": "It can slightly improve the signal by reducing local obstructions.",
-      "d": "It changes the carrier frequency."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "8. To calculate the received signal strength, you need the transmitter power and the pathloss. How are they combined?",
-    "answers": {
-      "a": "Transmitter power is added to the pathloss.",
-      "b": "Pathloss is subtracted from the transmitter power.",
-      "c": "Transmitter power is multiplied by the pathloss.",
-      "d": "Transmitter power is divided by the pathloss."
+      "a": "A user's call bounces between the voice and data network.",
+      "b": "A user is rapidly handed over back and forth between two adjacent cells.",
+      "c": "A call is dropped and immediately reconnected.",
+      "d": "The network signal strength rapidly increases and decreases."
     },
     "correctAnswer": "b",
     "difficulty": "medium"
   },
   {
-    "question": "9. A pathloss prediction formula is used primarily to...",
+    "question": "3. A very high 'handover probability' would most likely be caused by...",
     "answers": {
-      "a": "Choose the brand of the transmitter.",
-      "b": "Estimate the coverage area and plan a wireless network.",
-      "c": "Calculate the data speed of the connection.",
-      "d": "Determine the physical size of the receiver antenna."
+      "a": "a very high handover margin.",
+      "b": "a very low handover margin.",
+      "c": "the user not moving.",
+      "d": "the call drop probability being zero."
     },
     "correctAnswer": "b",
-    "difficulty": "beginner"
+    "difficulty": "advanced"
   },
   {
-    "question": "10. In a real-world city environment, the measured pathloss is almost always...?",
+    "question": "4. What is a likely consequence of setting the 'handover threshold' too low (i.e., the signal must be very poor before a handover is triggered)?",
     "answers": {
-      "a": "Greater than the pathloss predicted by the free-space model.",
-      "b": "Less than the pathloss predicted by the free-space model.",
-      "c": "Exactly equal to the pathloss predicted by the free-space model.",
-      "d": "Zero."
+      "a": "The handover probability will increase significantly.",
+      "b": "The call drop probability will increase.",
+      "c": "The SINR for the user will always be very high.",
+      "d": "The 'ping-pong effect' will become a major problem."
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "5. A successful handover should ideally result in the user experiencing...",
+    "answers": {
+      "a": "a higher SINR from the new cell.",
+      "b": "a lower SINR from the new cell.",
+      "c": "an immediate increase in call drop probability.",
+      "d": "no change in SINR or call quality."
     },
     "correctAnswer": "a",
     "difficulty": "medium"
+  },
+  {
+    "question": "6. How does a user's speed (e.g., walking vs. driving) typically affect handover probability?",
+    "answers": {
+      "a": "Speed has no effect on handovers.",
+      "b": "A faster-moving user will likely have a lower handover probability.",
+      "c": "A faster-moving user will likely have a higher handover probability.",
+      "d": "Only users who are stationary can perform a handover."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "7. What is the main trade-off when adjusting the handover threshold?",
+    "answers": {
+      "a": "Initiating the handover early (better SINR) vs. initiating it late (lower call drop risk).",
+      "b": "The cost of the handover vs. the user's data speed.",
+      "c": "The risk of dropping the call (if set too low) vs. the risk of a ping-pong handover (if set too high).",
+      "d": "Handover probability vs. handover margin."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "8. What does a high 'handover probability' imply for the network's signaling load?",
+    "answers": {
+      "a": "It decreases the signaling load.",
+      "b": "It has no effect on the signaling load.",
+      "c": "It increases the signaling load because each handover requires network messages.",
+      "d": "It only affects the voice channel, not the signaling channel."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "9. A user at the edge of a cell experiences poor SINR, but their call is not handed over and is eventually dropped. What is a possible cause?",
+    "answers": {
+      "a": "The handover margin is set too low.",
+      "b": "The handover threshold is set too high (i.s., signal must be good).",
+      "c": "The handover margin is set too high.",
+      "d": "The SINR from the new cell is too good."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "10. The objectives aim to study the effect of parameters on 'SINR', 'call drop probability', and 'handover probability'. Which of these is a measure of connection quality?",
+    "answers": {
+      "a": "SINR",
+      "b": "Call drop probability",
+      "c": "Handover probability",
+      "d": "All of the above"
+    },
+    "correctAnswer": "a",
+    "difficulty": "beginner"
   }
 
   ]
