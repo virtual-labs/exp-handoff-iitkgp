@@ -11,7 +11,7 @@ The mobile should get connected to B.S. which has the highest signal strength. H
 
 Thus some hysten's condition is used for h. If `P_(r_x)^T` (T= target B.S.) > `P_(r_x)^h` higher h/o threshold and `bar(P_(r_x)^c)` (c=current B.S.) < `P_(r_x)^h` minimum h/o threshold the execute h/o to `B*S_T` from `B*S_c`. Thus, it is threshold impeditive to study in part of the handoff process.
 
-`Delta_gamma= P_(r_x)^h - P_(r_x)^l`
+$$Delta_gamma= P_(r_x)^h - P_(r_x)^l$$
 
 A successful handoff is one where the call gets from and continuous without call or in other words the h occurs before h/o `P_(r_x)^c` becomes ` < P_(r_x)^0`. If `P_(r_x)^c < P_(r_x)^0`then call drop event occurs.
 
