@@ -9,7 +9,7 @@ Consider the figure below Initially say the mobile M is quite close to the base 
 
 The mobile should get connected to B.S. which has the highest signal strength. However if the M.S.continuously attaches itself to the B.S. with instantaneous height signal strength then the h/o rate may very high in server condition.
 
-Thus some hysten's condition is used for h. If $P_(r_x)^T$ (T= target B.S.) > $P_(r_x)^h$ higher h/o threshold and $bar(P_(r_x)^c)$ (c=current B.S.) < $P_(r_x)^h$ minimum h/o threshold the execute h/o to $B*S_T$ from $B*S_c$. Thus, it is threshold impeditive to study in part of the handoff process.
+Thus some hysten's condition is used for h. If $P_(r_x)^T$ (T= target B.S.) > $P_(r_x)^h$ higher h/o threshold and $bar(P_(r_x)^c)$ (c=current B.S.) < $P_(r_x)^h$ minimum h/o threshold the execute h/o to $B*S_T$  from $B*S_c$. Thus, it is threshold impeditive to study in part of the handoff process.
 
 $$Delta_gamma= P_(r_x)^h - P_(r_x)^l$$
 
