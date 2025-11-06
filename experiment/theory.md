@@ -13,7 +13,7 @@ Thus some hysten's condition is used for h. If $P_(r_x)^T$ (T= target B.S.) > $P
 
 $$Delta_gamma= P_(r_x)^h - P_(r_x)^l$$
 
-A successful handoff is one where the call gets from and continuous without call or in other words the h occurs before h/o $P_(r_x)^c$ becomes $ < P_(r_x)^0$. If $P_(r_x)^c < P_(r_x)^0$then call drop event occurs.
+A successful handoff is one where the call gets from and continuous without call or in other words the h occurs before h/o $P_(r_x)^c$ becomes < $P_(r_x)^0$. If $P_(r_x)^c < P_(r_x)^0$ then call drop event occurs.
 
 One would like to minimize the no of handoff events as well as minimize call drop probability. The experiment provides opportunity to study the inherent of these three parameter on h/o .
 
