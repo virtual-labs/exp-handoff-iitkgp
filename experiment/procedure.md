@@ -2,38 +2,36 @@
 
 Follow the instructions given below to perform the experiments:-
 
-* Step1: Click on START button to start experiment.
+* Step1: Enter your name then click  on START SIMULATION  button to start experiment.
 
    <div align="center">
     <img src="images/instruction1.png" alt="Large Scale Fading">  
       </div>
 
-* Step2: Enter your name then click OK button.
+* Step2:  Select the parameters (e.g.: Reuse, Environment, Beamwidth, Carrier frequency etc.)
 
     <div align="center">
     <img src="images/instruction2.png" alt="Large Scale Fading">  
       </div>
 
-* Step3: Select the parameters (e.g.: Reuse, Environment, Beamwidth, Carrier frequency etc.)
+* Step3: Click on START button and observe No. of Call Drops and No. of Handoffs. After start, you will notice the color of the mobile image changing from black to red if the mobile has entered the call-drop zone.
 
    <div align="center">
     <img src="images/instruction3.png" alt="Large Scale Fading">  
       </div>
 
-* Step4: Click on START button and observe No. of Call Drops and No. of Handoffs.
+* Step4: Click on STOP button to stop the running simulation.
 
     <div align="center">
     <img src="images/instruction4.png" alt="Large Scale Fading">  
       </div>
 
-* Step5: Enter your observation in the OBSERVATION box and Click on SUBMIT button.
-
-* Step6: Finally, click on REPORT to generate PDF report of the experiment.
+* Step5: Enter your observation in the OBSERVATION box and click on the SUBMIT button. 
 
     <div align="center">
     <img src="images/instruction5.png" alt="Large Scale Fading">  
       </div>
-
+* Step6: Finally, click on REPORT to generate PDF report of the experiment.
 * Step7: After PDF report generation you will get following message.
 
    <div align="center">
