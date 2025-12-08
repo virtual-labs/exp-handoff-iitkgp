@@ -1,13 +1,801 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<!-- Add CSS at the head of HTML file -->
-    <link rel="stylesheet" href="./css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handoff Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2e8f0; 
+        }
+        .control-panel { background-color: #dbeafe; border: 2px solid #60a5fa; }
+        .control-panel label { font-size: 0.7rem; }
+        .control-panel input, .control-panel select {
+            width: 100%;
+            padding: 2px 4px;
+            border-radius: 0;
+            border: 1px solid #9ca3af;
+            font-size: 0.75rem;
+        }
+        .sim-button:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .observation-panel {
+            background-color: #fefcbf; 
+            border: 1px solid #a1a1aa;
+        }
+        .log-panel {
+            background-color: #ffffff;
+            border: 1px solid #a1a1aa;
+        }
+        .threshold-panel {
+            background-color: #fefcbf;
+            border: 1px solid #a1a1aa;
+        }
+        .log-row {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            text-align: center;
+        }
+    </style>
 </head>
-<body>
-		<!-- Your code goes here-->
+<body class="text-gray-800">
 
-	<!-- Add JS at the bottom of HTML file --> 
-        <script src="./js/main.js"></script>
+    <div class="container mx-auto p-2">
+        <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-2">
+            
+            <div class="bg-white p-2 rounded shadow-md flex flex-col">
+                <div class="flex-grow aspect-video">
+                     <canvas id="simulationCanvas" class="bg-white border-2 border-blue-400"></canvas>
+                </div>
+                <div class="mt-1">
+                    <label for="observation-input" class="text-xs font-semibold">Observation:</label>
+                    <div class="flex gap-2">
+                       <input type="text" id="observation-input" class="w-full border rounded p-1 text-xs">
+                       <button id="submitBtn" class="sim-button bg-gray-300 hover:bg-gray-400 text-black font-bold rounded">SUBMIT</button>
+                    </div>
+                </div>
+                <div class="mt-1 grid grid-cols-[1fr_2fr_1fr] gap-1 text-xs">
+                    <div class="observation-panel p-2 font-mono">
+                        <div id="obs-name">Name: ...</div>
+                        <div id="obs-pr">Pr: ... dBm</div>
+                        <div id="obs-dist">Dist: ... m</div>
+                        <div id="obs-handoffs">No.Handoffs: 0</div>
+                        <div id="obs-calldrops">No.Calldrops: 0</div>
+                        <div id="obs-time">Time: ...</div>
+                        <div id="obs-snr">SNR(dB): ...</div>
+                        <div id="obs-outage">Outage Time(ms): 0</div>
+                    </div>
+                    <div class="log-panel p-1">
+                        <div id="log-header" class="log-row font-bold border-b border-gray-400">
+                            <span>SNR</span><span>CallD</span><span>HOs</span><span>Del1</span><span>Del2</span><span>t(ms)</span><span>t_out</span><span>% Out</span><span>alpha</span>
+                        </div>
+                        <div id="log-data-container" class="overflow-y-auto h-24"></div>
+                    </div>
+                    <div class="threshold-panel p-2 font-mono flex flex-col justify-between">
+                        <div>
+                            <div id="snr-h-display">SNR_h: ... dB</div>
+                            <div id="snr-l-display">SNR_l: ... dB</div>
+                        </div>
+                        <div>
+                            <div id="noise-power-display">Noise Power(dBm): ...</div>
+                            <div id="pr0-display">Pr0(dBm): ...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-100 p-2 rounded shadow-md flex flex-col gap-2">
+                <div class="control-panel p-2 flex-grow">
+                    <div class="grid grid-cols-2 gap-x-3 gap-y-1">
+                        <div class="col-span-2">
+                            <select id="environment">
+                                <option value="rune" selected>Rune</option>
+                                <option value="urban_micro">Urban Micro</option>
+                                <option value="urban_macro">Urban Macro</option>
+                                <option value="suburban_macro">Suburban Macro</option>
+                                <option value="rural_macro">Rural Macro</option>
+                            </select>
+                        </div>
+                        
+                        <div><label for="reuse">Reuse:</label></div>
+                        <div><select id="reuse"></select></div>
+
+                        <div><label for="cellRadius">Cell Radius(m):</label></div>
+                        <div><input type="number" id="cellRadius" value="500" step="10"></div>
+                        <div class="col-span-2 flex items-center gap-2"><input type="checkbox" id="sectorized" checked><label for="sectorized">Sectored</label></div>
+
+                        <div><label for="beamWidth">Beam Width:</label></div>
+                        <div><input type="number" id="beamWidth" value="70"></div>
+
+                        <div><label for="rotate">Rotate:</label></div>
+                        <div><input type="number" id="rotate" value="30"></div>
+                        
+                        <div><label for="verticalTilt">Vertical tilt:</label></div>
+                        <div><select id="verticalTilt"></select></div>
+                        
+                        <div class="col-span-2 flex items-center gap-2"><input type="checkbox" id="shadowing" checked><label for="shadowing">Shadowing</label></div>
+
+                        <div><label for="shadowingStdDev">Sigma(dB):</label></div>
+                        <div><input type="number" id="shadowingStdDev" value="4"></div>
+                        
+                        <div><label for="txPower">Pt(dBm):</label></div>
+                        <div><input type="number" id="txPower" value="34"></div>
+
+                        <div><label for="fc">fc(GHz):</label></div>
+                        <div><input type="number" id="fc" value="1.0" step="0.1"></div>
+                        
+                        <div><label for="ht">hT(m):</label></div>
+                        <div><input type="number" id="ht" value="10"></div>
+
+                        <div><label for="hr">hRx(m):</label></div>
+                        <div><input type="number" id="hr" value="1"></div>
+
+                        <div><label for="nf">NF(dB):</label></div>
+                        <div><input type="number" id="nf" value="7"></div>
+
+                        <div><label for="bw">BW(MHz):</label></div>
+                        <div><input type="number" id="bw" value="5"></div>
+
+                        <div><label for="snr">SNR(dB):</label></div>
+                        <div><input type="number" id="snr" value="5"></div>
+
+                        <div><label for="alpha">Alpha:</label></div>
+                        <div><input type="number" id="alpha" value="0.1" step="0.1" min="0" max="1"></div>
+
+                        <div><label for="delta1">Delta1:</label></div>
+                        <div><input type="number" id="delta1" value="3"></div>
+
+                        <div><label for="delta2">Delta2:</label></div>
+                        <div><input type="number" id="delta2" value="3"></div>
+
+                        <div><label for="timeslot">TimeSlot(s):</label></div>
+                        <div><input type="number" id="timeslot" value="20"></div>
+
+                        <div><label for="avgTime">AvgTime(ms):</label></div>
+                        <div><input type="number" id="avgTime" value="12"></div>
+                        
+                        <div><label for="mobileSpeed">Mobile Speed(mps):</label></div>
+                        <div><input type="number" id="mobileSpeed" value="50"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 mt-auto">
+                    <button id="setBtn" class="sim-button bg-gray-300 hover:bg-gray-400 text-black font-bold rounded">SET</button>
+                    <button id="startBtn" class="sim-button bg-gray-300 hover:bg-gray-400 text-black font-bold rounded" disabled>START</button>
+                    <button id="resetBtn" class="sim-button bg-gray-300 hover:bg-gray-400 text-black font-bold rounded">RESET</button>
+                    <button id="reportBtn" class="sim-button bg-gray-300 hover:bg-gray-400 text-black font-bold rounded" disabled>REPORT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="nameModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-sm text-center">
+            <h3 class="text-xl font-bold mb-4">Welcome!</h3>
+            <p class="text-gray-600 mb-4">What is your name?</p>
+            <input type="text" id="userNameInput" class="w-full p-2 border border-gray-300 rounded-md mb-4" placeholder="Enter your name">
+            <button id="startSimBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg">Start Simulation</button>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('simulationCanvas');
+            const ctx = canvas.getContext('2d');
+            const towerImg = new Image();
+            towerImg.src = 'images/tower.png'; 
+            const mobileImg = new Image();
+            mobileImg.src = 'images/mobiles.png';
+            const callDropImg = new Image();
+            callDropImg.src = 'images/cd.png'; 
+
+            const startBtn = document.getElementById('startBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const setBtn = document.getElementById('setBtn');
+            const reportBtn = document.getElementById('reportBtn');
+            const logContainer = document.getElementById('log-data-container');
+            
+            const nameModal = document.getElementById('nameModal');
+            const userNameInput = document.getElementById('userNameInput');
+            const startSimBtn = document.getElementById('startSimBtn');
+            const obsNameDisplay = document.getElementById('obs-name');
+
+            const observationInput = document.getElementById('observation-input');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const allControlIds = [
+                'environment', 'reuse', 'cellRadius', 'sectorized', 'beamWidth', 'rotate',
+                'verticalTilt', 'shadowing', 'shadowingStdDev', 'txPower', 'fc', 'ht',
+                'hr', 'nf', 'bw', 'snr', 'alpha', 'delta1', 'delta2', 'timeslot',
+                'avgTime', 'mobileSpeed'
+            ];
+            const controls = {};
+            allControlIds.forEach(id => {
+                controls[id] = document.getElementById(id);
+            });
+
+            let simState = {};
+            let simulationInterval;
+            
+            const sectorColors = {
+                1: 'rgba(255, 99, 132, 0.4)',
+                2: 'rgba(54, 162, 235, 0.4)',
+                3: 'rgba(255, 206, 86, 0.4)',
+            };
+            
+            function populateDropdowns() {
+                const reuseSelect = controls.reuse;
+                reuseSelect.innerHTML = '';
+                [1, 3, 4, 7, 9, 12, 13, 19].forEach(n => {
+                    const option = document.createElement('option');
+                    option.value = n;
+                    option.textContent = n;
+                    if (n === 7) option.selected = true;
+                    reuseSelect.appendChild(option);
+                });
+
+                const tiltSelect = controls.verticalTilt;
+                tiltSelect.innerHTML = '';
+                for (let i = 1; i <= 12; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    if (i === 12) option.selected = true;
+                    tiltSelect.appendChild(option);
+                }
+            }
+
+            function onImageLoad() {
+                if (towerImg.complete && mobileImg.complete && callDropImg.complete) {
+                    resizeCanvas();
+                }
+            }
+            towerImg.onload = onImageLoad;
+            mobileImg.onload = onImageLoad;
+            callDropImg.onload = onImageLoad;
+
+
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                resetSimulation();
+            }
+
+            function resetSimulation() {
+                clearInterval(simulationInterval);
+                if(startBtn) startBtn.textContent = 'START';
+                if(logContainer) logContainer.innerHTML = '';
+
+                const baseRadiusMeters = 500; 
+                const baseFitFactor = 8; 
+                const currentRadiusMeters = parseFloat(controls.cellRadius.value) || baseRadiusMeters;
+                const newFitFactor = (baseRadiusMeters / currentRadiusMeters) * baseFitFactor;
+                const cellRadiusPixels = canvas.width / (2 * Math.max(newFitFactor, 2));
+
+                const currentName = simState.userName || "...";
+
+                simState = {
+                    userName: currentName,
+                    isRunning: false,
+                    cellRadiusPixels: cellRadiusPixels,
+                    baseStations: [],
+                    mobileUser: { 
+                        x: 30, 
+                        y: canvas.height / 2, 
+                        servingBs: null,
+                    },
+                    time: 0,
+                    handoffs: 0,
+                    callDrops: 0,
+                    outageTime: 0,
+                    inOutage: false,
+                    outageCounter: 0,
+                    isCallDropped: false
+                };
+                
+                obsNameDisplay.textContent = `Name: ${simState.userName}`;
+                
+                generateBaseStations();
+                updateThresholds();
+                
+                simState.baseStations.forEach(bs => {
+                    bs.instPower = calculateRxPower(simState.mobileUser, bs);
+                    bs.avgPower = bs.instPower;
+                });
+                
+                let bestBs = findBestBs(simState.mobileUser);
+                simState.mobileUser.servingBs = bestBs;
+
+                updateAllCalculations();
+                draw();
+            }
+            
+            function dynamicUpdateOutputs() {
+                if (!simState.baseStations || simState.baseStations.length === 0) return;
+                updateThresholds();
+                
+                simState.baseStations.forEach(bs => {
+                    bs.instPower = calculateRxPower(simState.mobileUser, bs);
+                    bs.avgPower = bs.instPower; 
+                });
+                simState.mobileUser.servingBs = findBestBs(simState.mobileUser);
+
+                updateAllCalculations();
+                draw();
+            }
+
+            function updateThresholds() {
+                const bw_Hz = parseFloat(controls.bw.value) * 1e6;
+                const nf_dB = parseFloat(controls.nf.value);
+                const snr_l_dB = parseFloat(controls.snr.value);
+                const delta1_dB = parseFloat(controls.delta1.value);
+
+                const noisePower_dBm = -174 + 10 * Math.log10(bw_Hz) + nf_dB;
+                const pr0_dBm = noisePower_dBm + snr_l_dB;
+                const snr_h_dB = snr_l_dB + delta1_dB;
+                
+                simState.pr0_dBm = pr0_dBm;
+
+                document.getElementById('snr-h-display').textContent = `SNR_h: ${snr_h_dB.toFixed(2)} dB`;
+                document.getElementById('snr-l-display').textContent = `SNR_l: ${snr_l_dB.toFixed(2)} dB`;
+                document.getElementById('noise-power-display').textContent = `Noise Power(dBm): ${noisePower_dBm.toFixed(2)}`;
+                document.getElementById('pr0-display').textContent = `Pr0(dBm): ${pr0_dBm.toFixed(2)}`;
+            }
+            
+            function findBestBs(mobileUser, excludeBs = null) {
+                let bestPower = -Infinity;
+                let bestBs = null;
+                simState.baseStations.forEach(bs => {
+                    if (excludeBs && bs.id === excludeBs.id) return;
+                    if (bs.avgPower > bestPower) {
+                        bestPower = bs.avgPower;
+                        bestBs = bs;
+                    }
+                });
+                return bestBs;
+            }
+
+            function updateAllCalculations() {
+                 const servingBs = simState.mobileUser.servingBs;
+                 if (!servingBs) return;
+
+                 const servingPower = servingBs.avgPower;
+                 const servingDist_m = getDistance(simState.mobileUser, servingBs);
+                 const bestCandidate = findBestBs(simState.mobileUser, servingBs);
+                 const snr = servingPower - (bestCandidate ? bestCandidate.avgPower : -120);
+
+                 document.getElementById('obs-pr').textContent = `Pr: ${servingPower.toFixed(2)} dBm`;
+                 document.getElementById('obs-dist').textContent = `Dist: ${servingDist_m.toFixed(2)} m`;
+                 document.getElementById('obs-handoffs').textContent = `No.Handoffs: ${simState.handoffs}`;
+                 document.getElementById('obs-calldrops').textContent = `No.Calldrops: ${simState.callDrops}`;
+                 document.getElementById('obs-time').textContent = `Time: ${simState.time}`;
+                 document.getElementById('obs-snr').textContent = `SNR(dB): ${snr.toFixed(2)}`;
+                 document.getElementById('obs-outage').textContent = `Outage Time(ms): ${simState.outageTime}`;
+
+                 if (simState.isRunning) {
+                    const totalTime = simState.time;
+                    const percentOutage = totalTime > 0 ? (simState.outageTime / totalTime) * 100 : 0;
+                    const newLogRow = document.createElement('div');
+                    newLogRow.className = 'log-row';
+                    newLogRow.innerHTML = `
+                        <span>${snr.toFixed(1)}</span>
+                        <span>${simState.callDrops}</span>
+                        <span>${simState.handoffs}</span>
+                        <span>${controls.delta1.value}</span>
+                        <span>${controls.delta2.value}</span>
+                        <span>${totalTime}</span>
+                        <span>${simState.outageTime}</span>
+                        <span>${percentOutage.toFixed(1)}</span>
+                        <span>${controls.alpha.value}</span>
+                    `;
+                    logContainer.appendChild(newLogRow);
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                 }
+            }
+
+            function generateBaseStations() {
+                const R = simState.cellRadiusPixels;
+                const numRings = 6;
+                let cellId = 66; 
+                for (let r = -numRings; r <= numRings; r++) {
+                    for (let q = -numRings; q <= numRings; q++) {
+                        if (Math.abs(q + r) > numRings) continue;
+                        const x = canvas.width / 2 + R * (Math.sqrt(3) * q + Math.sqrt(3) / 2 * r);
+                        const y = canvas.height / 2 + R * (3 / 2) * r;
+                        
+                        if (x > -R * 1.5 && x < canvas.width + R * 1.5 && y > -R * 1.5 && y < canvas.height + R * 1.5) {
+                           const id = cellId++;
+                           simState.baseStations.push({ id, x, y, instPower: -150, avgPower: -150 });
+                        }
+                    }
+                }
+            }
+
+            function draw() {
+                if (!canvas.getContext || !simState.mobileUser) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const R = simState.cellRadiusPixels;
+
+                simState.baseStations.forEach(bs => {
+                    const isServing = simState.mobileUser.servingBs && bs.id === simState.mobileUser.servingBs.id;
+                    drawHexagon(bs.x, bs.y, R, isServing ? 'rgba(0, 255, 0, 0.3)' : null);
+                    if (controls.sectorized.checked) {
+                        drawSectors(bs.x, bs.y, R);
+                    }
+                    drawTower(bs.x, bs.y, bs.id);
+                });
+                
+                if (simState.mobileUser) {
+                    const imgWidth = Math.max(8, R * 0.2);
+                    const imgHeight = simState.inOutage ? imgWidth * 1.5 : imgWidth * 1.8; 
+                    const imageToDraw = simState.inOutage ? callDropImg : mobileImg;
+
+                    if (imageToDraw.complete) {
+                        ctx.drawImage(
+                            imageToDraw,
+                            simState.mobileUser.x - imgWidth / 2,
+                            simState.mobileUser.y - imgHeight / 2,
+                            imgWidth,
+                            imgHeight
+                        );
+                    }
+                }
+
+                if (simState.mobileUser && simState.mobileUser.servingBs) {
+                    ctx.beginPath();
+                    ctx.setLineDash([4, 4]); 
+                    ctx.strokeStyle = '#333333';
+                    ctx.lineWidth = 1;
+                    ctx.moveTo(simState.mobileUser.servingBs.x, simState.mobileUser.servingBs.y);
+                    ctx.lineTo(simState.mobileUser.x, simState.mobileUser.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]); 
+                }
+            }
+
+            function drawHexagon(x, y, size, fillStyle = null) {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const angle = Math.PI / 6 + Math.PI / 3 * i;
+                    ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
+                }
+                ctx.closePath();
+                if (fillStyle) {
+                    ctx.fillStyle = fillStyle;
+                    ctx.fill();
+                }
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            
+            function drawTower(x, y, id) {
+                 if (towerImg.complete) {
+                    const imgHeight = Math.max(10, simState.cellRadiusPixels * 0.5);
+                    const imgWidth = imgHeight;
+                    ctx.drawImage(towerImg, x - imgWidth / 2, y - imgHeight / 2 - (imgHeight * 0.1) , imgWidth, imgHeight);
+                    ctx.fillStyle = 'black';
+                    ctx.font = `${Math.max(8, simState.cellRadiusPixels * 0.2)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(id, x, y + simState.cellRadiusPixels * 0.3);
+                }
+            }
+            
+            function drawSectors(x, y, radius) {
+                const beamWidth = 120;
+                const rotation = parseFloat(controls.rotate.value) * Math.PI / 180;
+                const angles = [30, 150, 270];
+                const beamRad = beamWidth * Math.PI / 180;
+                ctx.save();
+                ctx.globalAlpha = 0.25;
+                const colors = [sectorColors[1], sectorColors[2], sectorColors[3]];
+                
+                angles.forEach((angle, i) => {
+                    const startAngle = (angle - beamWidth / 2) * Math.PI / 180 + rotation;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.arc(x, y, radius * 0.95, startAngle, startAngle + beamRad);
+                    ctx.closePath();
+                    ctx.fillStyle = colors[i];
+                    ctx.fill();
+                });
+                ctx.restore();
+            }
+            
+            function getDistance(mobile, bs) {
+                 const pixelDist = Math.hypot(mobile.x - bs.x, mobile.y - bs.y);
+                 const scale = parseFloat(controls.cellRadius.value) / simState.cellRadiusPixels;
+                 return pixelDist * scale;
+            }
+
+            function calculateRxPower(mobile, bs) {
+                 const Ptx_dBm = parseFloat(controls.txPower.value);
+                 const dist_m = getDistance(mobile, bs);
+                 const fc_MHz = parseFloat(controls.fc.value) * 1000;
+                 const ht_m = parseFloat(controls.ht.value);
+                 const hr_m = parseFloat(controls.hr.value);
+                 const dist_km = dist_m / 1000;
+
+                 if (dist_km <= 0) return Ptx_dBm;
+                 
+                 const a_hr = (1.1 * Math.log10(fc_MHz) - 0.7) * hr_m - (1.56 * Math.log10(fc_MHz) - 0.8);
+                 const pathLoss = 46.3 + 33.9 * Math.log10(fc_MHz) - 13.82 * Math.log10(ht_m) - a_hr + (44.9 - 6.55 * Math.log10(ht_m)) * Math.log10(dist_km);
+                 
+                 let rxPower = Ptx_dBm - pathLoss;
+
+                 if (controls.shadowing.checked) {
+                    const sigma = parseFloat(controls.shadowingStdDev.value);
+                    const shadowFade = sigma * (Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()));
+                    rxPower += shadowFade;
+                 }
+                 return rxPower;
+            }
+
+            function updateSimulation() {
+                if (!simState.isRunning) return;
+                
+                const timeStep_ms = parseFloat(controls.avgTime.value);
+                simState.time += timeStep_ms;
+
+                const speed_mps = parseFloat(controls.mobileSpeed.value);
+                const distance_m_step = speed_mps * (timeStep_ms / 1000);
+                const scale = simState.cellRadiusPixels / parseFloat(controls.cellRadius.value);
+                const distance_pixel_step = distance_m_step * scale;
+                simState.mobileUser.x += distance_pixel_step;
+                
+                if (simState.mobileUser.x > canvas.width + simState.cellRadiusPixels) {
+                     simState.mobileUser.x = -simState.cellRadiusPixels;
+                }
+
+                const alpha = parseFloat(controls.alpha.value);
+                simState.baseStations.forEach(bs => {
+                    bs.instPower = calculateRxPower(simState.mobileUser, bs);
+                    bs.avgPower = alpha * bs.instPower + (1 - alpha) * bs.avgPower;
+                });
+                
+                const servingBs = simState.mobileUser.servingBs;
+                const bestCandidate = findBestBs(simState.mobileUser, servingBs);
+                const delta1_dB = parseFloat(controls.delta1.value);
+                const delta2_dB = parseFloat(controls.delta2.value);
+                const handoffTriggerThreshold = simState.pr0_dBm + delta2_dB;
+
+                if (servingBs.avgPower < handoffTriggerThreshold) {
+                    if (bestCandidate && bestCandidate.avgPower > servingBs.avgPower + delta1_dB) {
+                        simState.mobileUser.servingBs = bestCandidate;
+                        simState.handoffs++;
+                    }
+                }
+                
+                const currentServingPower = simState.mobileUser.servingBs.avgPower;
+                if (currentServingPower < simState.pr0_dBm) {
+                    simState.inOutage = true;
+                    simState.outageTime += timeStep_ms;
+                    simState.outageCounter++;
+                    if (simState.outageCounter >= parseFloat(controls.timeslot.value) && !simState.isCallDropped) {
+                        simState.callDrops++;
+                        simState.isCallDropped = true; 
+                    }
+                } else {
+                    simState.inOutage = false;
+                    simState.outageCounter = 0; 
+                    simState.isCallDropped = false; 
+                }
+                
+                updateAllCalculations();
+                draw();
+            }
+            
+            function toggleSimulation() {
+                 simState.isRunning = !simState.isRunning;
+                 if(simState.isRunning) {
+                    startBtn.textContent = 'STOP';
+                    resetBtn.disabled = true;
+                    simulationInterval = setInterval(updateSimulation, parseFloat(controls.avgTime.value) || 100);
+                 } else {
+                    startBtn.textContent = 'START';
+                    reportBtn.disabled = false;
+                    resetBtn.disabled = false;
+                    clearInterval(simulationInterval);
+                 }
+            }
+
+            function handleReport() {
+                const { jsPDF } = window.jspdf;
+                const reportContainer = document.createElement('div');
+                reportContainer.style.position = 'absolute';
+                reportContainer.style.left = '-9999px';
+                reportContainer.style.width = '210mm';
+                reportContainer.style.padding = '10mm';
+                reportContainer.style.backgroundColor = 'white';
+                reportContainer.style.fontFamily = 'Arial, sans-serif';
+                document.body.appendChild(reportContainer);
+
+                const dateString = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+                const userName = simState.userName || "User";
+                const finalSNR = document.getElementById('obs-snr').textContent.replace('SNR(dB): ', '');
+                const percentOutage = simState.time > 0 ? ((simState.outageTime / simState.time) * 100).toFixed(1) : "0.0";
+                const observationText = observationInput.value || "Observation comes here";
+
+                const getVal = (id) => {
+                    const text = document.getElementById(id).textContent || '';
+                    const match = text.match(/-?\d+\.\d+/);
+                    return match ? match[0] : 'N/A';
+                };
+                
+                const params = {
+                    'Reuse:': `${controls.reuse.value} Model: ${controls.environment.options[controls.environment.selectedIndex].text}`,
+                    'fc(GHz):': controls.fc.value,
+                    'Rotate(deg):': controls.rotate.value,
+                    'hT(m):': controls.ht.value,
+                    'Sigma(dB):': controls.shadowingStdDev.value,
+                    'SNR(dB):': controls.snr.value,
+                    'Noise Figure(dB):': controls.nf.value,
+                    'Pr0(dBm):': getVal('pr0-display'),
+                    'Pt(dBm):': controls.txPower.value,
+                    'Beam Width(deg):': controls.beamWidth.value,
+                    'Cell Radius(m):': controls.cellRadius.value,
+                    'hM(m):': controls.hr.value,
+                    'Vertical Tilt(deg):': controls.verticalTilt.value,
+                    'Band Width(MHz):': controls.bw.value,
+                    'Noise Power(dBm):': getVal('noise-power-display'),
+                    'Time Slot(s):': controls.timeslot.value,
+                };
+
+                let paramsHtml = `
+                    <tr>
+                        <td style="border: 1px solid black; padding: 4px; font-weight: bold;">Reuse: ${controls.reuse.value} Model: ${controls.environment.options[controls.environment.selectedIndex].text}</td>
+                        <td style="border: 1px solid black; padding: 4px; font-weight: bold;">Pt(dBm): <span style="font-weight: normal;">${params['Pt(dBm):']}</span></td>
+                    </tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">fc(GHz): <span style="font-weight: normal;">${params['fc(GHz):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Beam Width(deg): <span style="font-weight: normal;">${params['Beam Width(deg):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Rotate(deg): <span style="font-weight: normal;">${params['Rotate(deg):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Cell Radius(m): <span style="font-weight: normal;">${params['Cell Radius(m):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">hT(m): <span style="font-weight: normal;">${params['hT(m):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">hM(m): <span style="font-weight: normal;">${params['hM(m):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Sigma(dB): <span style="font-weight: normal;">${params['Sigma(dB):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Vertical Tilt(deg): <span style="font-weight: normal;">${params['Vertical Tilt(deg):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">SNR(dB): <span style="font-weight: normal;">${params['SNR(dB):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Band Width(MHz): <span style="font-weight: normal;">${params['Band Width(MHz):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Noise Figure(dB): <span style="font-weight: normal;">${params['Noise Figure(dB):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Noise Power(dBm): <span style="font-weight: normal;">${params['Noise Power(dBm):']}</span></td></tr>
+                    <tr><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Pr0(dBm): <span style="font-weight: normal;">${params['Pr0(dBm):']}</span></td><td style="border: 1px solid black; padding: 4px; font-weight: bold;">Time Slot(s): <span style="font-weight: normal;">${params['Time Slot(s):']}</span></td></tr>
+                `;
+
+                reportContainer.innerHTML = `
+                    <div style="font-size: 14px;">
+                        <div style="margin-bottom: 1rem;">
+                            <h1 style="font-size: 1.25rem; font-weight: bold;">Fading Channels & Mobile Communications</h1>
+                            <p>IIT Kharagpur</p>
+                            <p>Date: ${dateString}</p>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <h2 style="font-size: 1.125rem; font-weight: bold; text-decoration: underline;">Exp 8: Handoff</h2>
+                            <p style="font-weight: bold;">Name: ${userName}</p>
+                        </div>
+                        
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black; text-align: left; margin-bottom: 2rem;">
+                            <thead style="background-color: #e0e0e0;"><tr style="border: 2px solid black;"><th colspan="2" style="text-align: center; padding: 8px;">Input Parameters</th></tr></thead>
+                            <tbody>${paramsHtml}</tbody>
+                        </table>
+                        
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black; text-align: center; margin-bottom: 2rem; font-size: 12px;">
+                            <thead style="background-color: #e0e0e0;">
+                                <tr style="border: 2px solid black;">
+                                    <th colspan="9" style="padding: 8px;">Exp. Results</th>
+                                </tr>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 4px;">SNR</th><th style="border: 1px solid black; padding: 4px;">No.Calldrops</th><th style="border: 1px solid black; padding: 4px;">No.Handoffs</th>
+                                    <th style="border: 1px solid black; padding: 4px;">Delta1</th><th style="border: 1px solid black; padding: 4px;">Delta2</th><th style="border: 1px solid black; padding: 4px;">Reading Time(ms)</th>
+                                    <th style="border: 1px solid black; padding: 4px;">Outage Time(ms)</th><th style="border: 1px solid black; padding: 4px;">% Outage</th><th style="border: 1px solid black; padding: 4px;">Alpha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid black; padding: 4px;">${parseFloat(finalSNR).toFixed(1)}</td><td style="border: 1px solid black; padding: 4px;">${simState.callDrops}</td><td style="border: 1px solid black; padding: 4px;">${simState.handoffs}</td>
+                                    <td style="border: 1px solid black; padding: 4px;">${controls.delta1.value}</td><td style="border: 1px solid black; padding: 4px;">${controls.delta2.value}</td><td style="border: 1px solid black; padding: 4px;">${simState.time}</td>
+                                    <td style="border: 1px solid black; padding: 4px;">${simState.outageTime}</td><td style="border: 1px solid black; padding: 4px;">${percentOutage}</td><td style="border: 1px solid black; padding: 4px;">${controls.alpha.value}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table style="width: 100%; border-collapse: collapse; border: 2px solid black; margin-bottom: 4rem;">
+                           <thead style="background-color: #e0e0e0;"><tr><th style="padding: 8px; text-align: center;">Observation</th></tr></thead>
+                           <tbody><tr><td style="padding: 8px; min-height: 50px;">${observationText}</td></tr></tbody>
+                        </table>
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 5rem; font-weight: bold;">
+                            <p>(Signature of ${userName})</p>
+                            <p>(Signature of Faculty)</p>
+                        </div>
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    html2canvas(reportContainer, { scale: 2 }).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
+                        const pdf = new jsPDF('p', 'mm', 'a4');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const canvasWidth = canvas.width;
+                        const canvasHeight = canvas.height;
+                        const ratio = canvasHeight / canvasWidth;
+                        const imgHeight = pdfWidth * ratio;
+                        
+                        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
+                        pdf.save('Handoff_Report.pdf');
+                        document.body.removeChild(reportContainer);
+                    });
+                }, 500);
+            }
+            
+            // --- SETUP ---
+            populateDropdowns();
+            
+            setBtn.addEventListener('click', () => {
+                allControlIds.forEach(id => { controls[id].disabled = true; });
+                setBtn.disabled = true;
+                startBtn.disabled = false;
+            });
+
+            startBtn.addEventListener('click', toggleSimulation);
+            
+            resetBtn.addEventListener('click', () => {
+                resetSimulation(); 
+                allControlIds.forEach(id => { controls[id].disabled = false; });
+                setBtn.disabled = false;
+                startBtn.disabled = true;
+                reportBtn.disabled = true;
+                observationInput.disabled = false;
+                submitBtn.disabled = false;
+                observationInput.value = '';
+            });
+
+            window.addEventListener('resize', resizeCanvas);
+            reportBtn.addEventListener('click', handleReport);
+            
+            const fullResetIds = ['cellRadius', 'rotate', 'beamWidth', 'environment', 'reuse', 'verticalTilt'];
+            const dynamicUpdateIds = [
+                'shadowingStdDev', 'txPower', 'fc', 'ht', 'hr', 'nf', 'bw', 'snr',
+                'delta1', 'delta2', 'alpha', 'mobileSpeed', 'shadowing', 'timeslot', 'avgTime'
+            ];
+            const drawOnlyIds = ['sectorized'];
+
+            allControlIds.forEach(id => {
+                const element = controls[id];
+                if (!element) return;
+                const eventType = (element.tagName === 'SELECT' || element.type === 'checkbox') ? 'change' : 'input';
+
+                if (fullResetIds.includes(id)) {
+                    element.addEventListener(eventType, resetSimulation);
+                } else if (dynamicUpdateIds.includes(id)) {
+                    element.addEventListener(eventType, dynamicUpdateOutputs);
+                } else if (drawOnlyIds.includes(id)) {
+                    element.addEventListener('change', draw);
+                }
+            });
+            
+            startSimBtn.addEventListener('click', () => {
+                const name = userNameInput.value.trim();
+                if (name) {
+                    simState.userName = name;
+                    obsNameDisplay.textContent = `Name: ${name}`;
+                    nameModal.style.display = 'none';
+                } else {
+                    alert("Please enter your name.");
+                }
+            });
+
+            submitBtn.addEventListener('click', () => {
+                observationInput.disabled = true;
+                submitBtn.disabled = true;
+            });
+
+            resizeCanvas(); 
+        });
+    </script>
 </body>
 </html>
